@@ -1,0 +1,63 @@
+PlayerSpeed = 200
+PlayerSpeedSmooth = 0.3
+PlayerJumpSpeed = 1
+PlayerJumpFrames = 2
+PlayerJumpDeceleration = 0.1
+Gravity = 0.1
+JumpForce = 2
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.MoveDir = 0
+	self.xChange = 0
+	self.Jumping = false
+	self.Grouded = false
+	-- Physics
+	self.yVel = 0
+end
+
+function on_input(self, action_id, action)
+	self.MoveDir = 0
+	if action_id == hash("Left") then
+		self.MoveDir = self.MoveDir - 1
+	end
+	if action_id == hash("Right") then
+		self.MoveDir = self.MoveDir + 1
+	end
+	if action_id == hash("Jump") then
+		self.Jumping = true
+	end
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	self.xChange = vmath.lerp(PlayerSpeedSmooth, self.xChange, self.MoveDir * PlayerSpeed)
+	pos.x = pos.x + self.xChange * dt
+	if not self.Grounded then
+		self.yVel = self.yVel - Gravity
+	end
+	pos.y = pos.y + self.yVel
+	go.set_position(pos)
+	go.set_rotation(vmath.quat_rotation_z(math.rad(0)))
+	if self.Jumping and self.Grounded then
+		self.yVel = JumpForce
+	end
+	self.Jumping = false
+	self.MoveDir = 0
+end
+function on_message(self, message_id, message, sender)
+	if sender==msg.url("#co") then
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("trigger_response") then -- <2>
+		pprint(sender)
+		if message.enter then -- <3>
+			self.Grounded = true
+			self.yVel = 0
+		else
+			self.Grounded = false
+		end
+	end
+end

@@ -1,0 +1,12 @@
+key_trigger {
+  input: KEY_SPACE
+  action: "Jump"
+}
+key_trigger {
+  input: KEY_A
+  action: "Left"
+}
+key_trigger {
+  input: KEY_D
+  action: "Right"
+}
