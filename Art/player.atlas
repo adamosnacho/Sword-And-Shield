@@ -10,6 +10,10 @@ images {
   image: "/Art/Platform.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/Art/sword.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "Walk Animation"
   images {

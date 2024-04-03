@@ -1,0 +1,16 @@
+image: "/Art/grass.jpg"
+tile_width: 64
+tile_height: 64
+tile_margin: 0
+tile_spacing: 0
+collision: "/Art/grass.jpg"
+material_tag: "tile"
+convex_hulls {
+  index: 0
+  count: 4
+  collision_group: "default"
+}
+collision_groups: "default"
+extrude_borders: 2
+inner_padding: 0
+sprite_trim_mode: SPRITE_TRIM_MODE_OFF

@@ -2,3 +2,7 @@ function init(self)
 	msg.post("#camera", "acquire_camera_focus") -- <1>
 	msg.post("@render:", "use_camera_projection") -- <2>
 end
+function update(self, dt)
+	local playerpos = go.get_position("#Player")
+	go.set_position(playerpos)
+end

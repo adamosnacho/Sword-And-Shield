@@ -1,21 +1,6 @@
-embedded_components {
-  id: "sprite"
-  type: "sprite"
-  data: "default_animation: \"grass\"\n"
-  "material: \"/builtins/materials/sprite.material\"\n"
-  "blend_mode: BLEND_MODE_ALPHA\n"
-  "size {\n"
-  "  x: 700.0\n"
-  "  y: 700.0\n"
-  "  z: 0.0\n"
-  "  w: 0.0\n"
-  "}\n"
-  "size_mode: SIZE_MODE_MANUAL\n"
-  "textures {\n"
-  "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/Art/blocks.atlas\"\n"
-  "}\n"
-  ""
+components {
+  id: "Player"
+  component: "/Scripts/Player.script"
   position {
     x: 0.0
     y: 0.0
@@ -27,14 +12,9 @@ embedded_components {
     z: 0.0
     w: 1.0
   }
-  scale {
-    x: 0.03
-    y: 0.03
-    z: 1.0
-  }
 }
 embedded_components {
-  id: "collisionobject"
+  id: "co"
   type: "collisionobject"
   data: "collision_shape: \"\"\n"
   "type: COLLISION_OBJECT_TYPE_KINEMATIC\n"
@@ -61,8 +41,8 @@ embedded_components {
   "    count: 3\n"
   "    id: \"\"\n"
   "  }\n"
-  "  data: 10.5\n"
-  "  data: 10.5\n"
+  "  data: 7.0388904\n"
+  "  data: 9.530056\n"
   "  data: 10.0\n"
   "}\n"
   "linear_damping: 0.0\n"
@@ -80,5 +60,33 @@ embedded_components {
     y: 0.0
     z: 0.0
     w: 1.0
+  }
+}
+embedded_components {
+  id: "sprite"
+  type: "sprite"
+  data: "default_animation: \"Player\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/Art/player.atlas\"\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 0.04
+    y: 0.04
+    z: 1.0
   }
 }
