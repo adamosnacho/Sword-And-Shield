@@ -7,11 +7,11 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/Art/Platform.png"
+  image: "/Art/sword.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/Art/sword.png"
+  image: "/Art/hit marker.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 animations {

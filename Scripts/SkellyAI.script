@@ -40,6 +40,8 @@ function init(self)
 	-- timer that controls the jump-window when using mouse/touch
 	self.touch_jump_timer = 0
 	self.side = false
+	self.players_sword_speed = 0
+	self.hp = 100
 end
 
 local function play_animation(self, anim)
@@ -70,6 +72,7 @@ local function update_animations(self)
 end
 
 function update(self, dt)
+	msg.post("/Player", "sword_speed")
 	ai(self, dt)
 	-- determine the target speed based on input
 	local target_speed = self.move_input * max_speed
@@ -165,10 +168,22 @@ end
 function on_message(self, message_id, message, sender)
 	-- check if we received a contact point message
 	if message_id == msg_contact_point_response then
-		handle_obstacle_contact(self, message.normal, message.distance)
+		if message.other_id == hash("/sword") then
+			self.hp = self.hp - (math.abs(self.players_sword_speed) * 50)
+			if self.hp <= 0 then
+				go.delete()
+			end
+			label.set_text("#hp", self.hp)
+			msg.post("/Player", hash("hit_enemy_sword_knockback"), {message, self.players_sword_speed < 0})
+		else
+			handle_obstacle_contact(self, message.normal, message.distance)
+		end
+	end
+	if message_id == hash("sword_speed_return") then
+		self.players_sword_speed = message[1]
 	end
 	if message_id == hash("trigger_response") then
-		if sender == msg.url("/Skelly#side") then
+		if sender == msg.url("/Skelly#side") and not message.other_id == hash("/sword") then
 			if message.enter then
 				self.side = true
 			else

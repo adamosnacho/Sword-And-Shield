@@ -19,6 +19,9 @@ publisher = Adam Ryan
 developer = Adam Ryan
 dependencies#0 = https://github.com/britzl/defold-orthographic/archive/master.zip
 dependencies#1 = https://github.com/subsoap/defos/archive/refs/tags/v2.7.1.zip
+dependencies#2 = https://github.com/britzl/defold-websocket/archive/1.6.0.zip
+dependencies#3 = https://github.com/britzl/defold-luasocket/archive/0.11.1.zip
+dependencies#4 = https://github.com/britzl/defold-luasec/archive/1.1.0.zip
 
 [physics]
 gravity_y = 0.0

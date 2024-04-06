@@ -1,0 +1,24 @@
+local stamina = 200
+local timeout = 0
+function init(self)
+	self.stamina_bar = gui.get_node("stamina filler")
+	self.timeout_bar = gui.get_node("timeout filler")
+	self.timeout = gui.get_node("timeout")
+end
+function update(self, dt)
+	msg.post("/Player", hash("stamina"))
+	gui.set_size(self.stamina_bar, vmath.vector3(stamina, 100, 0))
+	gui.set_position(self.stamina_bar, vmath.vector3(-((200 - stamina) / 2), 0, 0))
+	gui.set_size(self.timeout_bar, vmath.vector3(timeout, 100, 0))
+	gui.set_position(self.timeout_bar, vmath.vector3(-((200 - timeout) / 2), 0, 0))
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("stamina_return") then
+		stamina = message[1]
+	end
+	if message_id == hash("timeout") then
+		timeout = message[1]
+		gui.set_enabled(self.timeout, message[2])
+	end
+end
