@@ -1,16 +1,24 @@
+fps = require("metrics.fps")
 local stamina = 200
 local timeout = 0
+local hp = 100
 function init(self)
 	self.stamina_bar = gui.get_node("stamina filler")
-	self.timeout_bar = gui.get_node("timeout filler")
-	self.timeout = gui.get_node("timeout")
+	self.hp_bar = gui.get_node("hp filler")
+	self.fps_text = gui.get_node("fps")
+end
+function round(num, numDecimalPlaces)
+	local mult = 10^(numDecimalPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
 end
 function update(self, dt)
+	fps.update()
+	gui.set_text(self.fps_text, "FPS " .. tostring(round(fps.fps(), 0)))
 	msg.post("/Player", hash("stamina"))
 	gui.set_size(self.stamina_bar, vmath.vector3(stamina, 100, 0))
 	gui.set_position(self.stamina_bar, vmath.vector3(-((200 - stamina) / 2), 0, 0))
-	gui.set_size(self.timeout_bar, vmath.vector3(timeout, 100, 0))
-	gui.set_position(self.timeout_bar, vmath.vector3(-((200 - timeout) / 2), 0, 0))
+	gui.set_size(self.hp_bar, vmath.vector3(hp * 2, 100, 0))
+	gui.set_position(self.hp_bar, vmath.vector3(-((200 - hp * 2) / 2), 0, 0))
 end
 
 function on_message(self, message_id, message, sender)
@@ -19,6 +27,8 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == hash("timeout") then
 		timeout = message[1]
-		gui.set_enabled(self.timeout, message[2])
+	end
+	if message_id == hash("hp") then
+		hp = message[1]
 	end
 end

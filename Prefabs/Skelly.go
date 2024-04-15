@@ -23,6 +23,7 @@ embedded_components {
   "restitution: 0.5\n"
   "group: \"default\"\n"
   "mask: \"default\"\n"
+  "mask: \"arrow\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_BOX\n"
@@ -41,8 +42,8 @@ embedded_components {
   "    count: 3\n"
   "    id: \"\"\n"
   "  }\n"
-  "  data: 7.0388904\n"
-  "  data: 9.530056\n"
+  "  data: 6.3107295\n"
+  "  data: 20.422482\n"
   "  data: 10.0\n"
   "}\n"
   "linear_damping: 0.0\n"
@@ -65,12 +66,12 @@ embedded_components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "default_animation: \"Player\"\n"
+  data: "default_animation: \"Idle\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_MULT\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/Art/player.atlas\"\n"
+  "  texture: \"/Art/Player Images/player.atlas\"\n"
   "}\n"
   ""
   position {
@@ -197,7 +198,7 @@ embedded_components {
   ""
   position {
     x: 0.0
-    y: 14.0
+    y: 25.0
     z: 0.0
   }
   rotation {
@@ -210,5 +211,24 @@ embedded_components {
     x: 0.2
     y: 0.2
     z: 1.0
+  }
+}
+embedded_components {
+  id: "arrow spawner"
+  type: "factory"
+  data: "prototype: \"/Prefabs/arrow.go\"\n"
+  "load_dynamically: false\n"
+  "dynamic_prototype: false\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
   }
 }

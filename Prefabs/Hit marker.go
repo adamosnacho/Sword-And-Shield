@@ -21,7 +21,7 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/Art/player.atlas\"\n"
+  "  texture: \"/Art/Player Images/player.atlas\"\n"
   "}\n"
   ""
   position {

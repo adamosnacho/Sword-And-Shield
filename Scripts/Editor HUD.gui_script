@@ -1,0 +1,36 @@
+tooltip = {}
+tooltip["1"] = "grass"
+tooltip["0"] = "nothing"
+tooltip["-1"] = "spawn"
+tooltip["-2"] = "skelly"
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.picker = false
+end
+function on_message(self, message_id, message, sender)
+	if message_id == hash("cursor") then
+		local cursor = gui.get_node("cursor")
+		gui.set_text(cursor,  "[" .. message[1] .. ", " .. message[2] .. "]")
+	end
+	if message_id == hash("set place obj") then
+		local pick = gui.get_node("picker Text")
+		if tooltip[message[1]] then
+			gui.set_text(pick, "Object: " .. message[1] .. " | " .. tooltip[message[1]])
+		else
+			gui.set_text(pick, "Object: " .. message[1])
+		end
+	end
+end
+function update(self, dt)
+	gui.set_enabled(gui.get_node("picker"), self.picker)
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("Jump") then
+		if action.pressed then
+			self.picker = true
+		elseif action.released then
+			self.picker = false
+		end
+	end
+end

@@ -10,7 +10,39 @@ key_trigger {
   input: KEY_D
   action: "Right"
 }
+key_trigger {
+  input: KEY_W
+  action: "Up"
+}
+key_trigger {
+  input: KEY_S
+  action: "Down"
+}
+key_trigger {
+  input: KEY_BACKSPACE
+  action: "backspace"
+}
+key_trigger {
+  input: KEY_V
+  action: "save"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "touch"
+}
+mouse_trigger {
+  input: MOUSE_WHEEL_UP
+  action: "zoom in"
+}
+mouse_trigger {
+  input: MOUSE_WHEEL_DOWN
+  action: "zoom out"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_RIGHT
+  action: "rightcl"
+}
+text_trigger {
+  input: TEXT
+  action: "type"
 }

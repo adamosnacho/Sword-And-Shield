@@ -5,5 +5,6 @@ for i in range(depth):
     current.append([])
     current = current[-1]
 
-    if depth = i:
+    if depth == i:
+
 print(array)

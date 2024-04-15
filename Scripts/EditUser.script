@@ -1,0 +1,249 @@
+camera = require("orthographic.camera")
+local msg_contact_point_response = hash("contact_point_response")
+local msg_animation_done = hash("animation_done")
+local group_obstacle = hash("obstacle")
+local input_left = hash("Left")
+local input_right = hash("Right")
+local input_up = hash("Up")
+local input_down = hash("Down")
+local input_jump = hash("Jump")
+enemies = {}          -- create the matrix
+for i=1,500 do
+	enemies[i] = {}     -- create a new row
+	for j=1,500 do
+		enemies[i][j] = 0
+	end
+end
+labels = {}          -- create the matrix
+for i=1,500 do
+	labels[i] = {}     -- create a new row
+	for j=1,500 do
+		labels[i][j] = 0
+	end
+end
+local speed = 900
+-- !!! ALSO EDIT THIS IN EDITOR HUD.gui_script !!!
+tooltip = {}
+tooltip["1"] = "grass"
+tooltip["0"] = "nothing"
+tooltip["-1"] = "spawn"
+tooltip["-2"] = "skelly"
+
+
+Lvl1 = {1056,{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,-2,-2,-2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,-1,1,-3,-3,-3,-3,-3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,-1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,-1}}
+
+function build(data)
+	local size = data[1]
+	local d = data[2]
+	col = 0
+	row = 0
+	for i = 1, size, 1 do
+		if d[i] == -1 then
+			col = 0
+			row = row + 1
+		elseif d[i] == -2 then
+			enemies[row][col] = -2
+			labels[row][col] = factory.create("#label maker", vmath.vector3(row * 32 - 16, col * -32 - 16, 0), nil, {text=-2})
+		elseif d[i] == -3 then
+			enemies[row][col] = -3
+			labels[row][col] = factory.create("#label maker", vmath.vector3(row * 32 - 16, col * -32 - 16, 0), nil, {text=-3})
+		else
+			tilemap.set_tile("Level:/TileMap#TM", "layer1", col, -row, d[i])
+			col = col + 1
+		end
+	end
+end
+
+function loadLevel(lvl, webUrl)
+	if lvl == 1 then
+		build(Lvl1)
+	end
+end
+function round(num, numDecimalPlaces)
+	local mult = 10^(numDecimalPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.move_input = vmath.vector3()
+	self.message = ""
+	self.picker = false
+	self.tile = 1
+	self.use_tile = true
+	loadLevel(1, nil)
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	pos = pos + dt * self.move_input * speed
+	if not self.picker then
+		go.set_position(pos)
+	end
+	self.move_input = vmath.vector3()
+end
+
+local function place_tile(self, action)
+	local pos = camera.screen_to_world(nil, vmath.vector3(action.x, action.y, 0))
+	local x = round((pos.x + 16) / 32, 0)
+	local y = round((pos.y + 16) / 32, 0)
+	if x >= 0 and y <= 0 then
+		if enemies[x][y * -1] == 0 then
+			tilemap.set_tile("/TileMap#TM", "layer1", x, y, self.tile)
+		end
+	end
+end
+
+local function remove_tile(self, action)
+	local pos = camera.screen_to_world(nil, vmath.vector3(action.x, action.y, 0))
+	local x = round((pos.x + 16) / 32, 0)
+	local y = round((pos.y + 16) / 32, 0)
+	tilemap.set_tile("/TileMap#TM", "layer1", x, y, 0)
+end
+
+local function place_enemy(self, action)
+	local pos = camera.screen_to_world(nil, vmath.vector3(action.x, action.y, 0))
+	local x = round((pos.x + 16) / 32, 0)
+	local y = round((pos.y + 16) / 32, 0)
+	if x >= 0 and y <= 0 then
+		if enemies[x][y * -1] == 0 then
+			enemies[x][y * -1] = self.tile
+			labels[x][y * -1] = factory.create("#label maker", vmath.vector3(x * 32 - 16, y * 32 - 16, 0), nil, {text=self.tile})
+		end
+	end
+end
+
+local function remove_enemy(self, action)
+	local pos = camera.screen_to_world(nil, vmath.vector3(action.x, action.y, 0))
+	local x = round((pos.x + 16) / 32, 0)
+	local y = round((pos.y + 16) / 32, 0)
+	enemies[x][y * -1] = 0
+	if labels[x][y * -1] then
+		go.delete(labels[x][y * -1])
+	end
+end
+
+local function update_cursor_text(self, action)
+	local pos = camera.screen_to_world(nil, vmath.vector3(action.x, action.y, 0))
+	local x = round((pos.x + 16) / 32, 0)
+	local y = round((pos.y + 16) / 32, 0)
+	msg.post("#Editor HUD", hash("cursor"), {x, y})
+end
+function tablelength(T)
+	local count = 0
+	for _ in pairs(T) do count = count + 1 end
+	return count
+end
+function table_to_string(tbl)
+	local result = "{"
+	for k, v in pairs(tbl) do
+		result = result .. v
+		if k == tablelength(tbl) then
+		else
+			result = result..","
+		end
+	end
+	return result.."}"
+end
+
+local function saveWorld(self)
+	local out = {}
+	for y=0,31 do
+		for x=0,31 do
+			local i = tilemap.get_tile("Level:/TileMap#TM", "layer1", x, y * -1)
+			if i == 0 then
+				if enemies[x][y] == 0 then
+					table.insert(out, 0)
+				else
+					table.insert(out, enemies[x][y] - 1)
+				end
+			else
+				if i > -1 then
+					table.insert(out, i)
+				else
+					table.insert(out, i - 1)
+				end
+			end
+			
+		end
+		table.insert(out, -1)
+	end
+	local finish = "{" .. tablelength(out) .. "," ..  table_to_string(out) .. "}"
+	clipboard.copy(finish)
+	print(finish)
+end
+
+
+function on_message(self, message_id, message, sender)
+
+end
+
+function on_input(self, action_id, action)
+	if action_id == input_left then
+		self.move_input.x = self.move_input.x - action.value
+	end
+	if action_id == input_right then
+		self.move_input.x = self.move_input.x + action.value
+	end
+	if action_id == input_up then
+		self.move_input.y = self.move_input.y + action.value
+	end
+	if action_id == input_down then
+		self.move_input.y = self.move_input.y - action.value
+	end
+	if action_id == hash("touch") then
+		if self.use_tile then
+			place_tile(self, action)
+		else
+			place_enemy(self, action)
+		end
+	end
+	if action_id == hash("save") then
+		saveWorld(self)
+	end
+	if action_id == hash("rightcl") then
+		if self.use_tile then
+			remove_tile(self, action)
+		else
+			remove_enemy(self, action)
+		end
+	end
+	self.move_input.x = math.min(math.max(self.move_input.x, -1), 1)
+	self.move_input.y = math.min(math.max(self.move_input.y, -1), 1)
+	if action_id == hash("zoom in") then
+		camera.set_zoom(nil, math.min(math.max(camera.get_zoom(nil) + 0.2, 0.1), 7))
+	end
+	if action_id == hash("zoom out") then
+		camera.set_zoom(nil, math.min(math.max(camera.get_zoom(nil) - 0.2, 0.1), 7))
+	end
+	update_cursor_text(self, action)
+
+	if action_id == hash("type") then
+		if self.picker and string.len(self.message) < 3 and (action.text == "-" or action.text == "0" or action.text == "1" or action.text == "2" or action.text == "3" or action.text == "4" or action.text == "5" or action.text == "6" or action.text == "7" or action.text == "8" or action.text == "9") then
+			self.message = self.message .. action.text
+			msg.post("#Editor HUD", hash("set place obj"), {self.message})
+		end
+	elseif action_id == hash("backspace") and action.repeated and self.picker then
+		local l = string.len(self.message)
+		self.message = string.sub(self.message, 0, l-1)
+		msg.post("#Editor HUD", hash("set place obj"), {self.message})
+	end
+	if action_id == hash("Jump") then
+		if action.pressed then
+			self.picker = true
+			self.message = ""
+			msg.post("#Editor HUD", hash("set place obj"), {self.message})
+		elseif action.released then
+			self.picker = false
+			if not (tooltip[self.message] == nil) then
+				if tonumber(self.message) > 0 then
+					self.tile = tonumber(self.message)
+					self.use_tile = true
+				else
+					self.use_tile = false
+					self.tile = tonumber(self.message)
+				end
+			end
+		end
+	end
+end

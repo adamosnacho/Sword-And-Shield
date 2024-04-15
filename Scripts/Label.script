@@ -1,0 +1,10 @@
+go.property("text", 0)
+local tooltip = {}
+tooltip[1] = "grass"
+tooltip[0] = "nothing"
+tooltip[-1] = "spawn"
+tooltip[-2] = "skelly"
+function init(self)
+	label.set_text("#label", tooltip[self.text])
+	pprint(self.text)
+end

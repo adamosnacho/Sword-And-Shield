@@ -1,0 +1,79 @@
+images {
+  image: "/Art/Background.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Art/hit marker.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Art/arrow.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Art/Player Images/Shield.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Art/Player Images/Sword.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/Art/Player Images/Player Hand.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+animations {
+  id: "Walk"
+  images {
+    image: "/Art/Player Images/Player1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/Art/Player Images/Player2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/Art/Player Images/Player3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/Art/Player Images/Player4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/Art/Player Images/Player5.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/Art/Player Images/Player6.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "Idle"
+  images {
+    image: "/Art/Player Images/Player1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "New Animation"
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0
+max_page_width: 0
+max_page_height: 0
+rename_patterns: ""

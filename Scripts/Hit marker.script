@@ -8,5 +8,5 @@ function fixed_update(self, dt)
 	end
 	self.timeout = self.timeout + 1
 	go.set_rotation(vmath.quat_rotation_z(self.timeout / 10))
-	go.set_scale(vmath.vector3((10 - self.timeout) / 10, (10 - self.timeout) / 10, 1))
+	go.set_scale(vmath.vector3((11 - self.timeout) / 10, (11 - self.timeout) / 10, 1))
 end	

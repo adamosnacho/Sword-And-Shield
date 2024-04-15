@@ -1,0 +1,47 @@
+local lifetime = 500
+function init(self)
+	self.speed = 40
+	self.life = 0
+	self.nothit = true
+	self.hitplayer = false
+end
+
+function update(self, dt)
+	if self.nothit then
+		self.speed = self.speed - 10 * dt
+	else
+		msg.post("#collisionobject", "disable")
+	end
+	go.set_position(go.get_position() + vmath.rotate(go.get_rotation(), vmath.vector3(dt * self.speed * 10, 0, 0)))
+	self.life = self.life + 1
+	if self.life > lifetime then
+		go.delete()
+	end
+	if self.life > lifetime - 10 then
+		go.set_scale(vmath.vector3((lifetime - self.life) / 10, (lifetime - self.life) / 10, 1))
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("contact_point_response") then
+		if message.other_id == hash("/TileMap") then
+			self.nothit = false
+			self.speed = 0
+		end
+		if message.other_id == hash("/shield") then
+			local current_rotation = go.get_rotation()
+			local new_rotation = current_rotation * vmath.quat_rotation_z(math.rad(180))
+			go.set_rotation(new_rotation)
+		end
+		if message.other_id == hash("/Player") then
+			if not self.hitplayer then
+				self.life = lifetime - 20
+				self.hitplayer = true
+				self.nothit = false
+			end
+		end
+	end
+	if message_id == hash("contact_point_response") and not message.other_id == hash("/Player") then
+		self.nothit = false
+	end
+end

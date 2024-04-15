@@ -1,5 +1,4 @@
 -- player.script
-
 -- these are the tweaks for the mechanics, feel free to change them for a different feeling
 -- the acceleration to move right/left
 local move_acceleration = 3500
@@ -15,8 +14,10 @@ local jump_takeoff_speed = 300
 local touch_jump_timeout = 0.2
 
 --- AI 
-local minDist = 30
-
+local minDist = 90
+local firerate = 120
+local spotDist = 180
+local randomness = 50
 -- pre-hashing ids improves performance
 local msg_contact_point_response = hash("contact_point_response")
 local msg_animation_done = hash("animation_done")
@@ -42,6 +43,9 @@ function init(self)
 	self.side = false
 	self.players_sword_speed = 0
 	self.hp = 100
+	self.frame = 0
+	self.dir = 1
+	self.minDist = minDist
 end
 
 local function play_animation(self, anim)
@@ -71,8 +75,19 @@ local function update_animations(self)
 	end
 end
 
+function fixed_update(self, dt)
+	local playerpos = go.get_position("/Player")
+	local pos = go.get_position()
+	if self.frame > firerate and math.abs(pos.x - playerpos.x) < spotDist then
+		self.frame = 0
+		local playerpos = go.get_position("/Player")
+		local pos = go.get_position()
+		local rotation = vmath.quat_rotation_z(math.atan2(playerpos.y - pos.y, playerpos.x - pos.x))
+		factory.create("#arrow spawner", go.get_position() + vmath.vector3(self.dir * 10, 0, 0), rotation)
+	end
+	self.frame = self.frame + 1
+end
 function update(self, dt)
-	msg.post("/Player", "sword_speed")
 	ai(self, dt)
 	-- determine the target speed based on input
 	local target_speed = self.move_input * max_speed
@@ -118,6 +133,7 @@ function update(self, dt)
 	self.correction = vmath.vector3()
 	self.move_input = 0
 	self.ground_contact = false
+	msg.post("/Player", hash("sword_speed"))
 end
 
 local function handle_obstacle_contact(self, normal, distance)
@@ -169,7 +185,8 @@ function on_message(self, message_id, message, sender)
 	-- check if we received a contact point message
 	if message_id == msg_contact_point_response then
 		if message.other_id == hash("/sword") then
-			self.hp = self.hp - (math.abs(self.players_sword_speed) * 50)
+			msg.post("/Player", hash("sword_speed"))
+			self.hp = self.hp - math.abs(self.players_sword_speed) * 30
 			if self.hp <= 0 then
 				go.delete()
 			end
@@ -183,7 +200,7 @@ function on_message(self, message_id, message, sender)
 		self.players_sword_speed = message[1]
 	end
 	if message_id == hash("trigger_response") then
-		if sender == msg.url("/Skelly#side") and not message.other_id == hash("/sword") then
+		if sender == msg.url("#side") then
 			if message.enter then
 				self.side = true
 			else
@@ -191,22 +208,49 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 	end
+	if message_id == msg_contact_point_response then
+		if message.other_group == hash("arrow") then
+			self.hp = self.hp - 2
+			go.delete(message.other_id)
+			if self.hp <= 0 then
+				go.delete()
+			end
+			label.set_text("#hp", self.hp)
+			factory.create("/Player#marker spawner", message.position)
+		end
+	end
 end
 function ai(self, dt)
-	local playerpos = go.get_position("Level:/Player")
+	
+	self.minDist = self.minDist + math.random(-10, 10)
+	self.minDist = math.min(math.max(self.minDist, minDist - randomness), minDist + randomness)
+	local playerpos = go.get_position("/Player")
 	local pos = go.get_position()
 	if pos.x > playerpos.x then
 		self.move_input = -1
+		self.dir = self.move_input
 	else
 		self.move_input = 1
+		self.dir = self.move_input
 	end
-	if math.abs(pos.x - playerpos.x) < minDist then
-		self.move_input = 0
+	if math.abs(pos.x - playerpos.x) < self.minDist then
+		if math.abs(pos.x - playerpos.x) < self.minDist - 10 then
+			self.move_input = self.move_input * -1
+		else
+			self.move_input = 0
+		end
 	end
 	if self.side then
 		jump(self)
-	else
-		abort_jump(self)
+	end
+	if math.abs(pos.x - playerpos.x) > spotDist then
+		self.move_input = 0
+	end
+	if math.random(0, 10) == 0 then
+		self.move_input = self.move_input * -1
+	end
+	if math.random(0, 20) == 0 then
+		jump(self)
 	end
 end
 

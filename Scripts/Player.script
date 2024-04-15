@@ -23,7 +23,7 @@ local group_obstacle = hash("obstacle")
 local input_left = hash("Left")
 local input_right = hash("Right")
 local input_jump = hash("Jump")
-
+local sword_speed = 0
 function round(num, numDecimalPlaces)
 	local mult = 10^(numDecimalPlaces or 0)
 	return math.floor(num * mult + 0.5) / mult
@@ -52,6 +52,9 @@ function init(self)
 	self.stamina = 200
 	self.tool_time_out = 100
 	self.can_tool = true
+	self.tool = true
+	self.hp = 100
+	self.was60 = false
 end
 
 local function play_animation(self, anim)
@@ -81,18 +84,36 @@ local function update_animations(self)
 	end
 end
 function fixed_update(self, dt)
-	self.can_tool = self.tool_time_out > 60
-	self.tool_time_out = self.tool_time_out + 1
-	msg.post('/HUD holder#HUD', hash('timeout'), {self.tool_time_out * 3.33333333, self.tool_time_out < 60})
+	self.stamina = self.stamina + 0.4
 end
 function update(self, dt)
-	self.stamina = self.stamina + 0.1
+	x, y = defos.get_cursor_pos()
+	self.cursor_y_vel =  -((y - 500) * (0.01 / sens))
+
+	if self.stamina < 30 then
+		self.tool = false
+		self.was60 = true
+	else
+		if self.was60 then
+			self.was60 = false
+			self.tool = true
+		end
+		self.cursor_y_vel = math.min(math.max(self.cursor_y_vel, -0.4), 0.4)
+	end
+	self.cursor_y_vel = round(self.cursor_y_vel, 2)
 	if self.can_tool then
 		self.tool_ang = self.cursor_y_vel + self.tool_ang
-		self.stamina = self.stamina - (math.abs(self.cursor_y_vel) * 4)
+	else
+		self.cursor_y_vel = 0
 	end
+	defos.set_cursor_pos(500, 500)
+	sword_speed = self.cursor_y_vel
+	
+	self.tool_ang = self.cursor_y_vel + self.tool_ang
+	self.stamina = self.stamina - (math.abs(self.cursor_y_vel) * 8)
 
 	self.stamina = math.min(math.max(self.stamina, 0), 200)
+	self.hp = math.min(math.max(self.hp, 0), 100)
 	if self.move_input == -1 then
 		self.dir = self.move_input
 	elseif self.move_input == 1 then
@@ -102,10 +123,20 @@ function update(self, dt)
 	if self.dir == -1 then
 		swordrot = math.rad(180)
 	end
-	self.tool_ang = math.rad(math.min(math.max(math.deg(self.tool_ang), -90), 90))
-	go.set_rotation(vmath.quat(), "/sword")
-	go.set("/sword", "euler.z", math.deg(self.tool_ang))
-	go.set("/sword", "euler.y", math.deg(swordrot))
+	self.tool_ang = math.rad(math.min(math.max(math.deg(self.tool_ang), -80), 80))
+	if self.tool then
+		go.set_rotation(vmath.quat(), "/sword")
+		go.set("/sword", "euler.z", math.deg(self.tool_ang))
+		go.set("/sword", "euler.y", math.deg(swordrot))
+		msg.post("/shield", "disable")
+		msg.post("/sword", "enable")
+	else
+		go.set_rotation(vmath.quat(), "/sword")
+		go.set("/shield", "euler.z", math.deg(self.tool_ang))
+		go.set("/shield", "euler.y", math.deg(swordrot))
+		msg.post("/shield", "enable")
+		msg.post("/sword", "disable")
+	end
 	-- determine the target speed based on input
 	local target_speed = self.move_input * max_speed
 	-- calculate the difference between our current speed and the target speed
@@ -150,6 +181,7 @@ function update(self, dt)
 	self.correction = vmath.vector3()
 	self.move_input = 0
 	self.ground_contact = false
+	msg.post("/HUD holder#HUD", hash("hp"), {self.hp})
 end
 
 local function handle_obstacle_contact(self, normal, distance)
@@ -179,7 +211,7 @@ end
 function on_message(self, message_id, message, sender)
 	-- check if we received a contact point message
 	if message_id == msg_contact_point_response then
-		if message.other_id == hash("/sword") then
+		if message.other_id == hash("/sword") or message.other_id == hash("/shield") then
 		else
 			handle_obstacle_contact(self, message.normal, message.distance)
 		end
@@ -191,15 +223,12 @@ function on_message(self, message_id, message, sender)
 		msg.post(sender, hash("stamina_return"), {self.stamina})
 	end
 	if message_id == hash("hit_enemy_sword_knockback") then
-		if self.can_tool then
-			if message[2] then
-				self.tool_ang = math.rad(80)
-			else
-				self.tool_ang = math.rad(-80)
-			end
-			self.stamina = self.stamina - math.abs(self.cursor_y_vel * 30)
-			self.tool_time_out = 0
-			factory.create("#marker spawner", message[1].position)
+		self.stamina = self.stamina - math.abs(self.cursor_y_vel * 90)
+		factory.create("#marker spawner", message[1].positio§n)
+	end
+	if message_id == msg_contact_point_response then
+		if message.other_group == hash("arrow") then
+			self.hp = self.hp - 10
 		end
 	end
 end
@@ -232,7 +261,6 @@ function on_input(self, action_id, action)
 	end
 	sprite.set_hflip("#sprite", self.dir < 0)
 	if action_id == input_jump then
-
 		if action.released then
 			abort_jump(self)
 		else
@@ -240,28 +268,9 @@ function on_input(self, action_id, action)
 		end
 	end
 	if action_id == hash("touch") and action.pressed then
-		defos.set_cursor_visible(false)
+		self.tool = false
 	end
-	if action_id == hash("Esc") and action.pressed then
-		defos.set_cursor_visible(true)
+	if action_id == hash("touch") and action.released then
+		self.tool = true
 	end
-	y = action.y
-	pprint(action)
-	
-	self.cursor_y_vel = round(self.cursor_y_vel, 1)
-
-	y = action.y
-	self.cursor_y_vel =  (y - 500) * (0.01 / sens)
-	if self.stamina < 40 then
-		self.cursor_y_vel = math.min(math.max(self.cursor_y_vel, -0.2), 0.2)
-	else
-		self.cursor_y_vel = math.min(math.max(self.cursor_y_vel, -0.5), 0.5)
-	end
-	self.cursor_y_vel = round(self.cursor_y_vel, 1)
-	if self.can_tool then
-		self.tool_ang = self.cursor_y_vel + self.tool_ang
-	else
-		self.cursor_y_vel = 0
-	end
-	defos.set_cursor_pos(500, 500)
 end

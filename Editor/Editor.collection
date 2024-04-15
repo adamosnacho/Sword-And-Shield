@@ -1,0 +1,266 @@
+name: "Level"
+instances {
+  id: "Background"
+  prototype: "/Prefabs/Background.go"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 0.988541
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "camera"
+  prototype: "/orthographic/camera.go"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  component_properties {
+    id: "script"
+    properties {
+      id: "near_z"
+      value: "-1000.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "far_z"
+      value: "1000.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "zoom"
+      value: "4.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "projection"
+      value: "FIXED_ZOOM"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "follow"
+      value: "true"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "follow_immediately"
+      value: "true"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
+    properties {
+      id: "follow_target"
+      value: "/EditUser"
+      type: PROPERTY_TYPE_HASH
+    }
+    properties {
+      id: "follow_lerp"
+      value: "0.3"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "follow_offset"
+      value: "0.0, 30.0, 0.0"
+      type: PROPERTY_TYPE_VECTOR3
+    }
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+scale_along_z: 0
+embedded_instances {
+  id: "TileMap"
+  children: "HUD holder"
+  data: "components {\n"
+  "  id: \"TM\"\n"
+  "  component: \"/Game/TileMap.tilemap\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: -2.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"collisionobject\"\n"
+  "  type: \"collisionobject\"\n"
+  "  data: \"collision_shape: \\\"/Game/TileMap.tilemap\\\"\\n"
+  "type: COLLISION_OBJECT_TYPE_STATIC\\n"
+  "mass: 0.0\\n"
+  "friction: 0.1\\n"
+  "restitution: 0.5\\n"
+  "group: \\\"default\\\"\\n"
+  "mask: \\\"default\\\"\\n"
+  "mask: \\\"arrow\\\"\\n"
+  "linear_damping: 0.0\\n"
+  "angular_damping: 0.0\\n"
+  "locked_rotation: false\\n"
+  "bullet: false\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: -2.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 0.5
+    y: 0.5
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "EditUser"
+  data: "components {\n"
+  "  id: \"EditUser\"\n"
+  "  component: \"/Scripts/EditUser.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"Editor\"\n"
+  "  component: \"/Scripts/Editor.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"Editor HUD\"\n"
+  "  component: \"/Editor/Editor HUD.gui\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"label maker\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/Prefabs/LabelObject.go\\\"\\n"
+  "load_dynamically: false\\n"
+  "dynamic_prototype: false\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "HUD holder"
+  data: ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
